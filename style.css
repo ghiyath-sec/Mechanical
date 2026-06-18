@@ -235,7 +235,7 @@ textarea:focus-visible {
 .header-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 1rem;
   padding-block: 0.85rem;
 }
 
@@ -243,6 +243,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 0.7rem;
+  flex-shrink: 0;
 }
 
 .brand-mark {
@@ -286,6 +287,8 @@ textarea:focus-visible {
   height: 38px;
   padding: 8px;
   z-index: 110;
+  margin-inline-start: auto;
+  flex-shrink: 0;
 }
 
 .nav-toggle-bar {
@@ -299,36 +302,36 @@ textarea:focus-visible {
 
 /* تحويل الزر إلى علامة X عند الفتح */
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(8px) rotate(45deg);
 }
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
   opacity: 0;
 }
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 42, 61, 0.45);
+  z-index: 104;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+.nav-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .primary-nav {
-  position: fixed;
-  inset: 0 0 0 auto;
-  top: 0;
-  height: 100vh;
-  width: min(78vw, 320px);
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-medium);
-  padding: 5.5rem 1.75rem 2rem;
-  transform: translateX(100%);
-  transition: transform var(--transition-base);
-  overflow-y: auto;
-}
-
-[dir="rtl"] .primary-nav {
-  inset: 0 auto 0 0;
-  transform: translateX(-100%);
-}
-
-.primary-nav.is-open {
-  transform: translateX(0);
+  flex: 1;
+  min-width: 0;
 }
 
 .nav-list {
@@ -1026,31 +1029,6 @@ textarea:focus-visible {
     padding-inline: 2rem;
   }
 
-  .nav-toggle {
-    display: none;
-  }
-
-  .primary-nav {
-    position: static;
-    height: auto;
-    width: auto;
-    background: none;
-    box-shadow: none;
-    padding: 0;
-    transform: none;
-    overflow: visible;
-  }
-
-  .nav-list {
-    flex-direction: row;
-    align-items: center;
-    gap: 1.6rem;
-  }
-
-  .nav-link--cta {
-    margin-top: 0;
-  }
-
   .hero-inner {
     flex-direction: row;
     align-items: center;
@@ -1081,6 +1059,92 @@ textarea:focus-visible {
   }
 }
 
+/* قائمة جانبية — الموبايل والأجهزة اللوحية */
+@media (max-width: 991px) {
+  .nav-overlay {
+    display: block;
+  }
+
+  .primary-nav {
+    position: fixed;
+    inset: 0 0 0 auto;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: min(78vw, 320px);
+    flex: none;
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-medium);
+    padding: 5.5rem 1.75rem 2rem;
+    transform: translateX(100%);
+    transition: transform var(--transition-base), visibility var(--transition-base);
+    overflow-y: auto;
+    z-index: 105;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  [dir="rtl"] .primary-nav {
+    inset: 0 auto 0 0;
+    transform: translateX(-100%);
+  }
+
+  .primary-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+  }
+}
+
+/* قائمة أفقية — سطح المكتب */
+@media (min-width: 992px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .primary-nav {
+    position: static;
+    height: auto;
+    width: auto;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    transform: none;
+    overflow: visible;
+    z-index: auto;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  [dir="rtl"] .primary-nav {
+    inset: auto;
+    transform: none;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .nav-link--cta {
+    margin-top: 0;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
 /* الشاشات الكبيرة */
 @media (min-width: 1024px) {
   .section {
@@ -1092,6 +1156,21 @@ textarea:focus-visible {
   }
 }
 
+@media (min-width: 1200px) {
+  .nav-list {
+    gap: 0.85rem 1.4rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+  }
+
+  .nav-link--cta {
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
 /* شاشات صغيرة جداً */
 @media (max-width: 380px) {
   .hero-title {
@@ -1100,5 +1179,13 @@ textarea:focus-visible {
 
   .btn {
     width: 100%;
+  }
+
+  .brand-role {
+    display: none;
+  }
+
+  .brand-name {
+    font-size: 0.9rem;
   }
 }
