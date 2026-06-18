@@ -15,22 +15,45 @@
      ---------------------------------------------------------------- */
   var navToggle = document.getElementById('nav-toggle');
   var primaryNav = document.getElementById('primary-nav');
+  var navOverlay = document.getElementById('nav-overlay');
+
+  function setNavOpen(isOpen) {
+    if (!primaryNav || !navToggle) return;
+
+    primaryNav.classList.toggle('is-open', isOpen);
+    navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    navToggle.setAttribute('aria-label', isOpen ? 'إغلاق القائمة' : 'فتح القائمة');
+    document.body.classList.toggle('nav-open', isOpen);
+
+    if (navOverlay) {
+      navOverlay.classList.toggle('is-visible', isOpen);
+      navOverlay.hidden = !isOpen;
+      navOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    }
+  }
 
   if (navToggle && primaryNav) {
     navToggle.addEventListener('click', function () {
-      var isOpen = primaryNav.classList.toggle('is-open');
-      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      navToggle.setAttribute('aria-label', isOpen ? 'إغلاق القائمة' : 'فتح القائمة');
+      setNavOpen(!primaryNav.classList.contains('is-open'));
     });
 
-    /* إغلاق القائمة تلقائياً عند الضغط على أي رابط (تجربة مستخدم أفضل في الموبايل) */
+    if (navOverlay) {
+      navOverlay.addEventListener('click', function () {
+        setNavOpen(false);
+      });
+    }
+
     primaryNav.addEventListener('click', function (event) {
       if (event.target.classList.contains('nav-link')) {
-        primaryNav.classList.remove('is-open');
-        navToggle.setAttribute('aria-expanded', 'false');
-        navToggle.setAttribute('aria-label', 'فتح القائمة');
+        setNavOpen(false);
       }
     });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth >= 992) {
+        setNavOpen(false);
+      }
+    }, { passive: true });
   }
 
   /* ----------------------------------------------------------------
